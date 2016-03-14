@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import multiprocessing
 import requests
 from multiprocessing import Queue
-from ensurepip import __main__
+import json
 
 
 class ProxySpider(object):
@@ -91,46 +91,55 @@ class ProxySpider(object):
         pass
         
 def p(index,usefullist):
-    print index,usefullist
+    print index
+    print usefullist
 
 def show(index,queue):
     queue.put(index)
 
 def testproxy(ip,port,usefullist=None):
     print (ip,port)
-#     try:
-#         ipjson = {"http":"http://"+str(ip)+":"+ str(port)}
-#         response = requests.get("http://www.baidu.com",proxies=ipjson)
-#         if "百度一下" not in response.content.decode("utf-8"):
-#             raise Exception
-#         else:
-#             print (ip,port)
-# #                usefullist.put((iplist[index][0],iplist[index][1]))
-#             return True
-#     except Exception,e:
-#         return False
+    try:
+        ipjson = {"http":"http://"+str(ip)+":"+ str(port)}
+        response = requests.get("http://www.baidu.com",proxies=ipjson)
+        print json.dump(response)
+        if "百度一下" not in response.content.decode("utf-8"):
+            print 'error'
+            raise Exception
+        else:
+#                usefullist.put((iplist[index][0],iplist[index][1]))
+            print 'success . process end '
+            return True
+    except Exception,e:
+        print e
+        return False
     
 if __name__ == "__main__":
     a = ProxySpider()
     iplist = a.start()
+    
 
-#     maxprocessnumber = 4
-#     pool = multiprocessing.Pool(processes = maxprocessnumber)
-#             
-#     for i in xrange(0,20):
-#         pool.apply_async(p,(i,usefullist))
-#   
-#     pool.close()
-#     pool.join()
+    maxprocessnumber = 10
+    pool = multiprocessing.Pool(processes = maxprocessnumber)
+             
+    for i in xrange(0,20):
+        ip = str(iplist[i][0])
+        port = str(iplist[i][1])
+        pool.apply_async(testproxy,(ip,port,))
+   
+    pool.close()
+    pool.join()
 #              
 #     usefullist = a.manager.list()
-    queue = Queue()
-    job = []
-    usefullist = []
-    for i in xrange(0,2):
-        p = multiprocessing.Process( target = p, args = (iplist[i][0],iplist[i][1],) )
-        p.start()
-        job.append(p)
-    for p in job:
-        p.join()
-    print queue.qsize()
+#     queue = Queue()
+#     job = []
+#     usefullist = []
+#     for i in xrange(0,20):
+#         ip = str(iplist[i][0])
+#         port = str(iplist[i][1])
+#         p = multiprocessing.Process( target = testproxy, args = (ip,port) )
+#         p.start()
+#         job.append(p)
+#     for p in job:
+#         p.join()
+#     print queue.qsize()
