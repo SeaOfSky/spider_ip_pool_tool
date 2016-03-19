@@ -101,15 +101,9 @@ def testproxy(ip,port,usefullist=None):
     print (ip,port)
     try:
         ipjson = {"http":"http://"+str(ip)+":"+ str(port)}
-        response = requests.get("http://www.baidu.com",proxies=ipjson)
-        print json.dump(response)
-        if "百度一下" not in response.content.decode("utf-8"):
-            print 'error'
-            raise Exception
-        else:
-#                usefullist.put((iplist[index][0],iplist[index][1]))
-            print 'success . process end '
-            return True
+        response = requests.get("http://www.baidu.com",proxies=ipjson,timeout=3)
+        usefullist.put((ip,port))
+        return True
     except Exception,e:
         print e
         return False
@@ -118,17 +112,20 @@ if __name__ == "__main__":
     a = ProxySpider()
     iplist = a.start()
     
-
+    manager = multiprocessing.Manager()
+    q = manager.Queue()
     maxprocessnumber = 10
     pool = multiprocessing.Pool(processes = maxprocessnumber)
              
     for i in xrange(0,20):
         ip = str(iplist[i][0])
         port = str(iplist[i][1])
-        pool.apply_async(testproxy,(ip,port,))
+        pool.apply_async(testproxy,(ip,port,q))
    
     pool.close()
     pool.join()
+    
+    print q.qsize()
 #              
 #     usefullist = a.manager.list()
 #     queue = Queue()
