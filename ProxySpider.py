@@ -117,7 +117,7 @@ if __name__ == "__main__":
     maxprocessnumber = 10
     pool = multiprocessing.Pool(processes = maxprocessnumber)
              
-    for i in xrange(0,20):
+    for i in xrange(0,len(iplist)):
         ip = str(iplist[i][0])
         port = str(iplist[i][1])
         pool.apply_async(testproxy,(ip,port,q))
