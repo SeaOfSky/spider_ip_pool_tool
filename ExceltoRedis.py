@@ -10,11 +10,11 @@ from multiprocessing import Queue
 import json
 from __builtin__ import str
 
-Redis_HOSt = "192.168.1.154"
+Redis_HOSt = "localhost"
 Redis_PORT = "6379"
 PROXY_KEY = "proxys"
-S_ExcelPath = "proxy.xlsx"
-D_ExcelPath = "m_proxy.xls"
+S_ExcelPath = "test.xls"
+D_ExcelPath = "m_newproxy.xls"
 MAX_PROCESS_NUMBER = 10
 MAX_TEST_TIME_OUT = 4 
 
